@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dev_container_image_name="alma-java-dev-container"
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+docker build \
+    --build-arg "USER_ID=$(id -u)" \
+    --build-arg "USER_GID=$(id -g)" \
+    --tag "$dev_container_image_name" \
+    --file "$script_dir/Dockerfile" \
+    "$script_dir/.."

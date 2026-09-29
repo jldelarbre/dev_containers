@@ -1,0 +1,24 @@
+{
+  "name": "Alma Java Dev Container",
+  "image": "alma-java-dev-container",
+  "remoteUser": "dev_user",
+  "updateRemoteUserUID": true,
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "mounts": [
+    "source=${localEnv:HOME}/.m2,target=/home/dev_user/.m2,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "jetbrains": {
+      "plugins": []
+    },
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-maven",
+        "vscjava.vscode-gradle",
+        "redhat.vscode-xml"
+      ]
+    }
+  }
+}
