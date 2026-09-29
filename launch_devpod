@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Installation:
+
+# curl -L -o devpod "https://github.com/loft-sh/devpod/releases/latest/download/devpod-linux-amd64" \
+#   && sudo install -c -m 0755 devpod /usr/local/bin \
+#   && rm -f devpod
+
+# devpod --version
+
+# devpod provider add docker
+# devpod provider use docker
+
+if ! command -v devpod >/dev/null 2>&1; then
+    printf 'Error: the devpod CLI is not installed or not on PATH.\n' >&2
+    exit 127
+fi
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+workspace_folder="$script_dir"
+
+exec devpod up "$workspace_folder" --ide none "$@"
+
+# ssh devcontainers.devpod
+# devpod up "$workspace_folder" --ide vscode
+# devpod up "$workspace_folder" --ide openvscode
+# devpod up "$workspace_folder" --ide codium
+# Requires JetBrains Gateway
+# devpod up "$workspace_folder" --ide intellij
