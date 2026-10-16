@@ -36,6 +36,10 @@ changing the image or this configuration, rebuild and recreate the container:
 ./launch_dev_container --remove-existing-container
 ```
 
+The container also runs its own Docker daemon. The Dev Container uses privileged
+mode for nested Docker, and the `dev_user` account is in the `docker` group. Docker
+commands inside the container use this isolated daemon rather than the host daemon.
+
 Build the project:
 
 ```sh

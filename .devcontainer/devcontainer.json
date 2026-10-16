@@ -1,8 +1,9 @@
 {
   "name": "Alma Java Dev Container",
-  "image": "alma-java-dev-container:1.1",
+  "image": "alma-java-dev-container:1.2",
   "overrideCommand": false,
   "runArgs": [
+    "--privileged",
     "--network=${localEnv:DEVCONTAINER_NETWORK:dev-net}",
     "--hostname=${localEnv:DEVCONTAINER_HOSTNAME:devbox}",
     "--name=${localEnv:DEVCONTAINER_HOSTNAME:devbox}",

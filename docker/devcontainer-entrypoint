@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dockerd --host=unix:///var/run/docker.sock &
+dockerd_pid=$!
+
+cleanup() {
+    kill "$dockerd_pid" 2>/dev/null || true
+    wait "$dockerd_pid" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+for ((attempt = 0; attempt < 30; attempt++)); do
+    if docker info >/dev/null 2>&1; then
+        break
+    fi
+    if ! kill -0 "$dockerd_pid" 2>/dev/null; then
+        printf 'Error: Docker daemon exited during startup.\n' >&2
+        exit 1
+    fi
+    sleep 1
+done
+
+if ! docker info >/dev/null 2>&1; then
+    printf 'Error: Docker daemon did not become ready within 30 seconds.\n' >&2
+    exit 1
+fi
+
+ssh-keygen -A
+/usr/sbin/sshd -t
+/usr/sbin/sshd -E /proc/1/fd/2
+
+"$@"
