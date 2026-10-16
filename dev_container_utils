@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+DEVCONTAINER_NETWORK="${DEVCONTAINER_NETWORK:-dev-net}"
+DEVCONTAINER_NETWORK_SUBNET="${DEVCONTAINER_NETWORK_SUBNET:-172.28.0.0/16}"
+export DEVCONTAINER_NETWORK DEVCONTAINER_NETWORK_SUBNET
+
+get_next_dev_container_name() {
+    local container_names container_name suffix
+    local highest_suffix=0
+    local found_devbox=false
+    local found_suffixed_devbox=false
+
+    if ! container_names="$(docker ps --all --format '{{.Names}}')"; then
+        printf 'Error: unable to list Docker containers.\n' >&2
+        return 1
+    fi
+
+    while IFS= read -r container_name; do
+        if [[ "$container_name" == "devbox" ]]; then
+            found_devbox=true
+        elif [[ "$container_name" =~ ^devbox_([0-9]+)$ ]]; then
+            found_suffixed_devbox=true
+            suffix=$((10#${BASH_REMATCH[1]}))
+            if ((suffix > highest_suffix)); then
+                highest_suffix=$suffix
+            fi
+        fi
+    done <<< "$container_names"
+
+    if [[ "$found_devbox" == false && "$found_suffixed_devbox" == false ]]; then
+        printf 'devbox\n'
+    elif [[ "$found_suffixed_devbox" == false ]]; then
+        printf 'devbox_2\n'
+    else
+        printf 'devbox_%d\n' "$((highest_suffix + 1))"
+    fi
+}
+
+get_dev_container_port() {
+    local container_name="${1:-}"
+    local instance_number
+
+    if (($# != 1)); then
+        printf 'Usage: get_dev_container_port <container-name>\n' >&2
+        return 2
+    fi
+
+    if [[ "$container_name" == "devbox" ]]; then
+        instance_number=1
+    elif [[ "$container_name" =~ ^devbox_([0-9]{1,2})$ ]]; then
+        instance_number=$((10#${BASH_REMATCH[1]}))
+        if ((instance_number < 2 || instance_number > 99)); then
+            printf 'Error: unsupported dev container name: %s\n' "$container_name" >&2
+            return 1
+        fi
+    else
+        printf 'Error: unsupported dev container name: %s\n' "$container_name" >&2
+        return 1
+    fi
+
+    printf '%d\n' "$((2200 + instance_number))"
+}

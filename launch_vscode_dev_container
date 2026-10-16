@@ -9,6 +9,11 @@ fi
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 workspace_folder="$script_dir"
 
+source "$script_dir/dev_container_utils"
+DEVCONTAINER_HOSTNAME="$(get_next_dev_container_name)"
+DEVCONTAINER_SSH_PORT="$(get_dev_container_port "$DEVCONTAINER_HOSTNAME")"
+export DEVCONTAINER_HOSTNAME DEVCONTAINER_SSH_PORT
+
 exec devcontainer up --workspace-folder "$workspace_folder" \
     --mount type=volume,source=vscode,target=/vscode,external=true \
     "$@"

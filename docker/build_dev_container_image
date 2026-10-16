@@ -2,7 +2,7 @@
 set -euo pipefail
 
 dev_container_image_name="alma-java-dev-container"
-dev_container_image_version="1.0"
+dev_container_image_version="1.1"
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 

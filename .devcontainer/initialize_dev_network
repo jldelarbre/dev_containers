@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$script_dir/../dev_container_utils"
+
+: "${DEVCONTAINER_NETWORK:?DEVCONTAINER_NETWORK must be set}"
+: "${DEVCONTAINER_NETWORK_SUBNET:?DEVCONTAINER_NETWORK_SUBNET must be set}"
+
+if ! docker network inspect "$DEVCONTAINER_NETWORK" >/dev/null 2>&1; then
+    docker network create \
+        --driver bridge \
+        --subnet "$DEVCONTAINER_NETWORK_SUBNET" \
+        "$DEVCONTAINER_NETWORK"
+fi

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ssh-keygen -A
+/usr/sbin/sshd -t
+/usr/sbin/sshd -E /proc/1/fd/2
+
+exec "$@"

@@ -1,12 +1,22 @@
 {
   "name": "Alma Java Dev Container",
-  "image": "alma-java-dev-container:1.0",
+  "image": "alma-java-dev-container:1.1",
+  "overrideCommand": false,
+  "runArgs": [
+    "--network=${localEnv:DEVCONTAINER_NETWORK:dev-net}",
+    "--hostname=${localEnv:DEVCONTAINER_HOSTNAME:devbox}",
+    "--name=${localEnv:DEVCONTAINER_HOSTNAME:devbox}",
+    "--publish=127.0.0.1:${localEnv:DEVCONTAINER_SSH_PORT:2201}:22"
+  ],
+  "initializeCommand": "bash \"${localWorkspaceFolder}/.devcontainer/initialize_dev_network\" && bash \"${localWorkspaceFolder}/.devcontainer/initialize_ssh_keys\"",
+  "postCreateCommand": "printf 'Container hostname: %s\\nContainer IP: %s\\nLocal port: %s\\n' \"$(hostname)\" \"$(hostname -I)\" \"${localEnv:DEVCONTAINER_SSH_PORT:2201}\"",
   "remoteUser": "dev_user",
   "updateRemoteUserUID": true,
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "mounts": [
-    "source=${localEnv:HOME}/.m2,target=/home/dev_user/.m2,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.m2,target=/home/dev_user/.m2,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh/authorized_keys,target=/home/dev_user/.ssh/authorized_keys,type=bind,readonly"
   ],
   "customizations": {
     "jetbrains": {
